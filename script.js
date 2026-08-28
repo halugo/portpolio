@@ -76,8 +76,7 @@ function renderSiteContent(sc) {
   const downloadAllEl = document.querySelector('[data-field="download-all"]');
   if (downloadAllEl) {
     if (sc.all_docs_file_url) {
-      downloadAllEl.href = sc.all_docs_file_url;
-      downloadAllEl.setAttribute('download', sc.all_docs_file_name || '');
+      downloadAllEl.href = withDownloadName(sc.all_docs_file_url, sc.all_docs_file_name);
       downloadAllEl.style.display = '';
     }
     else { downloadAllEl.style.display = 'none'; }
@@ -118,7 +117,7 @@ function renderPortfolio(items) {
     article.className = 'portfolio-card reveal' + (item.download_file_url ? ' has-download' : '');
 
     const downloadHtml = item.download_file_url ? `
-      <a href="${item.download_file_url}" class="card-download" download="${escapeHtml(item.download_file_name || '')}">
+      <a href="${withDownloadName(item.download_file_url, item.download_file_name)}" class="card-download">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         문서 다운로드
       </a>` : '';
@@ -165,6 +164,15 @@ function renderSns(links) {
 
 function escapeHtml(str) {
   return String(str).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+}
+
+// 다른 도메인(Supabase Storage)의 파일은 HTML download 속성이 브라우저에 따라 무시될 수 있어서,
+// Supabase Storage가 지원하는 ?download=파일명 쿼리 파라미터로 Content-Disposition을 강제 지정한다.
+// 이렇게 하면 도메인이 달라도 한글 파일명이 깨지지 않고 그대로 저장된다.
+function withDownloadName(url, filename) {
+  if (!url) return url;
+  const sep = url.includes('?') ? '&' : '?';
+  return `${url}${sep}download=${encodeURIComponent(filename || '')}`;
 }
 
 // =========================================================
@@ -316,6 +324,11 @@ viewerEl.addEventListener('touchstart', (e) => {
   touchStartY = e.changedTouches[0].clientY;
 }, { passive: true });
 viewerEl.addEventListener('touchend', (e) => {
+  // 사용자가 핀치줌으로 이미지를 확대한 상태라면, 스와이프는 이미지 안에서 이동(패닝)하려는
+  // 의도일 가능성이 높으므로 페이지 넘기기로 가로채지 않고 브라우저의 기본 동작에 맡긴다.
+  const isZoomedIn = window.visualViewport && window.visualViewport.scale > 1.05;
+  if (isZoomedIn) return;
+
   const dx = e.changedTouches[0].clientX - touchStartX;
   const dy = e.changedTouches[0].clientY - touchStartY;
   const SWIPE_THRESHOLD = 48;

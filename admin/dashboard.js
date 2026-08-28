@@ -22,6 +22,26 @@ function showToast(message, type = 'success') {
   setTimeout(() => { toastEl.className = ''; }, 3000);
 }
 
+// 세션 만료 시각(exp, 초 단위 UNIX timestamp)에 맞춰 자동 로그아웃한다.
+// setTimeout의 최대 지연시간(약 24.8일)보다 세션(1시간)이 훨씬 짧으므로 그대로 사용해도 안전하다.
+function scheduleAutoLogout(expSeconds) {
+  if (!expSeconds) return;
+  const msUntilExpiry = expSeconds * 1000 - Date.now() + 1000; // 여유 1초
+  if (msUntilExpiry <= 0) {
+    forceLogout('세션이 만료되었습니다. 다시 로그인해주세요.');
+    return;
+  }
+  setTimeout(() => {
+    forceLogout('세션이 만료되어 자동으로 로그아웃되었습니다. 다시 로그인해주세요.');
+  }, msUntilExpiry);
+}
+
+async function forceLogout(message) {
+  showToast(message, 'error');
+  await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+  setTimeout(() => { window.location.href = '/admin/index.html'; }, 1200);
+}
+
 // ---------------------------------------------------------------
 // 초기 로드
 // ---------------------------------------------------------------
@@ -32,6 +52,7 @@ async function init() {
     window.location.href = '/admin/index.html';
     return;
   }
+  scheduleAutoLogout(me.exp);
 
   const res = await fetch('/api/admin/content');
   if (!res.ok) {
@@ -396,6 +417,10 @@ $('#save-btn').addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(state),
     });
+    if (res.status === 401) {
+      await forceLogout('세션이 만료되어 저장하지 못했습니다. 다시 로그인 후 시도해주세요.');
+      return;
+    }
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || '저장에 실패했습니다.');
     showToast('저장 완료! 공개 사이트에 반영되었습니다.');

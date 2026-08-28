@@ -125,7 +125,8 @@ img,svg{ display: block; }
    공용 섹션 헤더
 ========================================================= */
 .section{ padding: 96px 0; }
-#career{ padding-bottom: 60px; } /* 다음 섹션(포트폴리오)과의 간격을 01→02 간격과 비슷하게 맞춤 */
+#career{ padding-bottom: 32px; } /* 다음 섹션(포트폴리오)과의 간격을 더 좁게 */
+#portfolio{ padding-top: 56px; }
 .section-head{
   border-bottom: 1px solid var(--border);
   padding-bottom: 32px;
@@ -393,7 +394,7 @@ img,svg{ display: block; }
   border-radius: var(--radius-md);
   padding: 0;
   height: 82vh;
-  touch-action: pan-y; /* 세로 스크롤은 막지 않으면서 좌우 스와이프 제스처를 받기 위함 */
+  touch-action: pan-y pinch-zoom; /* 세로 스크롤 + 핀치줌은 네이티브로 허용, 가로 스와이프만 JS가 처리 */
 }
 .lightbox-nav{
   flex-shrink: 0;
@@ -468,6 +469,8 @@ img,svg{ display: block; }
   .field-value{ font-size: 15px; }
 
   .section{ padding: 56px 0; }
+  #career{ padding-bottom: 24px; }
+  #portfolio{ padding-top: 32px; }
   .section-title{ font-size: 30px; }
   .section-sub{ font-size: 14px; margin-top: 12px; }
   .eyebrow-inline{ font-size: 13px; }
