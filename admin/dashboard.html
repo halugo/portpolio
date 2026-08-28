@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 대시보드</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  :root{
+    --primary:#2563eb; --primary-light:#dbeafe; --text-primary:#0f172b; --text-secondary:#62748e;
+    --border:#e2e8f0; --bg-page:#f6f8fb; --danger:#dc2626; --danger-bg:#fef2f2; --success:#16a34a; --success-bg:#f0fdf4;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Pretendard', sans-serif; background:var(--bg-page); color:var(--text-primary); padding-bottom:120px; }
+  header{
+    position:sticky; top:0; z-index:10;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px; background:#fff; border-bottom:1px solid var(--border);
+  }
+  header h1{ font-size:17px; font-weight:700; margin:0; }
+  header .actions{ display:flex; align-items:center; gap:10px; }
+  button{ font-family:inherit; cursor:pointer; }
+  #logout-btn{
+    padding:9px 16px; border:1px solid var(--border); border-radius:8px; background:#fff;
+    font-size:14px; font-weight:500; color:var(--text-secondary);
+  }
+  #logout-btn:hover{ border-color:var(--primary); color:var(--primary); }
+  #save-btn{
+    padding:10px 22px; border:none; border-radius:8px; background:var(--primary);
+    color:#fff; font-size:14px; font-weight:700;
+  }
+  #save-btn:disabled{ opacity:.6; cursor:not-allowed; }
+
+  main{ max-width:820px; margin:0 auto; padding:32px; }
+  .panel{ background:#fff; border:1px solid var(--border); border-radius:16px; padding:28px; margin-bottom:24px; }
+  .panel h2{ font-size:16px; font-weight:700; margin:0 0 20px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+
+  label{ display:block; font-size:13px; font-weight:600; color:var(--text-secondary); margin:16px 0 6px; }
+  label:first-of-type{ margin-top:0; }
+  input[type=text], input[type=email], textarea{
+    width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px;
+    font-size:14px; font-family:inherit; resize:vertical;
+  }
+  input:focus, textarea:focus, select:focus{ outline:2px solid var(--primary); outline-offset:1px; }
+  .hint{ font-size:12px; color:var(--text-secondary); margin-top:4px; }
+
+  .item-card{ border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:14px; position:relative; }
+  .item-card .remove-btn{
+    position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%;
+    border:1px solid var(--border); background:#fff; color:var(--danger); font-size:14px; font-weight:700;
+  }
+  .item-card .remove-btn:hover{ background:var(--danger-bg); }
+
+  .add-btn{
+    width:100%; padding:12px; border:1px dashed var(--border); border-radius:10px;
+    background:#fff; color:var(--primary); font-size:14px; font-weight:600;
+  }
+  .add-btn:hover{ background:var(--primary-light); }
+
+  select{ padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; }
+
+  .file-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .file-btn{
+    padding:9px 14px; border:1px solid var(--border); border-radius:8px; background:#fff;
+    font-size:13px; font-weight:500; color:var(--text-primary);
+  }
+  .file-btn:hover{ border-color:var(--primary); color:var(--primary); }
+  .file-status{ font-size:12.5px; color:var(--text-secondary); }
+  .thumb-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .thumb{ width:64px; height:64px; border-radius:8px; overflow:hidden; border:1px solid var(--border); position:relative; }
+  .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .thumb button{
+    position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%;
+    border:none; background:rgba(15,23,43,.7); color:#fff; font-size:10px; line-height:1;
+  }
+
+  #toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    padding:12px 20px; border-radius:10px; font-size:14px; font-weight:600;
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:50;
+  }
+  #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  #toast.success{ background:var(--success-bg); color:var(--success); border:1px solid #bbf7d0; }
+  #toast.error{ background:var(--danger-bg); color:var(--danger); border:1px solid #fecaca; }
+
+  #loading{ text-align:center; padding:80px 0; color:var(--text-secondary); font-size:14px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>관리자 대시보드</h1>
+    <div class="actions">
+      <button id="logout-btn" type="button">로그아웃</button>
+      <button id="save-btn" type="button">전체 저장</button>
+    </div>
+  </header>
+
+  <div id="loading">불러오는 중...</div>
+
+  <main id="app" hidden>
+    <!-- 01 내소개 -->
+    <section class="panel">
+      <h2>내소개</h2>
+      <label for="f-name">이름</label>
+      <input type="text" id="f-name">
+      <label for="f-role">역할 태그라인</label>
+      <input type="text" id="f-role" placeholder="예: Web · Service Planner">
+      <label for="f-birth">생년월일</label>
+      <input type="text" id="f-birth" placeholder="예: 1986.06.12">
+      <label for="f-region">거주지역</label>
+      <input type="text" id="f-region">
+      <label for="f-edu">최종학력</label>
+      <input type="text" id="f-edu">
+      <label for="f-message">하고싶은 말</label>
+      <textarea id="f-message" rows="3"></textarea>
+      <label for="f-email">이메일</label>
+      <input type="email" id="f-email">
+      <label for="f-career-summary">경력 보조문구</label>
+      <input type="text" id="f-career-summary" placeholder="예: 총 13년(웹기획 7년, 서비스기획 6년) — 비워두면 화면에 노출되지 않습니다">
+      <label>문서 한번에 받기 (전체 포트폴리오 첨부파일)</label>
+      <div class="file-row">
+        <button type="button" class="file-btn" id="f-alldocs-btn">파일 선택</button>
+        <span class="file-status" id="f-alldocs-status">등록된 파일 없음</span>
+        <input type="file" id="f-alldocs-input" hidden>
+      </div>
+      <p class="hint">파일을 등록하지 않으면 공개 사이트에서 "문서 한번에 받기" 버튼이 노출되지 않습니다.</p>
+    </section>
+
+    <!-- 02 경력 -->
+    <section class="panel">
+      <h2>경력</h2>
+      <div id="career-list"></div>
+      <button type="button" class="add-btn" id="career-add-btn">+ 경력 추가</button>
+    </section>
+
+    <!-- 03 포트폴리오 -->
+    <section class="panel">
+      <h2>포트폴리오</h2>
+      <div id="portfolio-list"></div>
+      <button type="button" class="add-btn" id="portfolio-add-btn">+ 포트폴리오 추가</button>
+    </section>
+
+    <!-- 04 SNS -->
+    <section class="panel">
+      <h2>SNS 링크</h2>
+      <div id="sns-list"></div>
+      <button type="button" class="add-btn" id="sns-add-btn">+ SNS 추가</button>
+      <p class="hint" style="margin-top:12px;">아이콘 이미지와 URL이 둘 다 있어야 공개 사이트에 노출됩니다.</p>
+    </section>
+  </main>
+
+  <div id="toast"></div>
+
+<script src="../config.js"></script>
+<script type="module" src="./dashboard.js"></script>
+</body>
+</html>

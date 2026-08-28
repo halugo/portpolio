@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>김이주 | Web · Service Planner</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link rel="stylesheet" href="style.css">
+<script src="config.js"></script>
+</head>
+<body>
+
+  <!-- ===================== 01 내 소개 ===================== -->
+  <section class="hero" id="profile">
+    <div class="aurora" aria-hidden="true">
+      <span class="blob blob-1"></span>
+      <span class="blob blob-2"></span>
+      <span class="blob blob-3"></span>
+    </div>
+    <div class="wrap">
+      <p class="eyebrow reveal">01 — INTRO</p>
+      <h1 class="hero-name reveal" data-field="name">김이주</h1>
+      <p class="tagline reveal" data-field="role">Web · Service Planner</p>
+
+      <div class="profile-card reveal">
+        <div class="field" data-field-row="birth">
+          <p class="field-label">생년월일</p>
+          <p class="field-value" id="pf-birth">1986.06.12</p>
+        </div>
+        <div class="field" data-field-row="region">
+          <p class="field-label">거주지역</p>
+          <p class="field-value" id="pf-region">경기도 군포</p>
+        </div>
+        <div class="field field-full" data-field-row="edu">
+          <p class="field-label">최종학력</p>
+          <p class="field-value" id="pf-edu">서울 방송통신대학교 컴퓨터과학과</p>
+        </div>
+        <div class="field field-full field-last" data-field-row="message">
+          <p class="field-label">하고싶은 말</p>
+          <p class="field-value" id="pf-message">약 15회 웹 기획 구축과 모바일게임 및 웹 서비스 기획 경험을 고루 가지고 있습니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 02 경력 ===================== -->
+  <section class="section" id="career">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow eyebrow-inline">02 — CAREER</p>
+        <h2 class="section-title">경력</h2>
+        <!-- 보조문구: 관리자 미입력 시 이 줄 자체를 렌더링하지 않음 -->
+        <p class="section-sub" data-field="career-note">총 13년 (웹기획 7년, 서비스기획 6년)</p>
+      </div>
+
+      <ol class="timeline" id="timeline" data-repeat="career-item">
+        <li class="timeline-item reveal">
+          <div class="timeline-rail" aria-hidden="true">
+            <span class="timeline-dot"></span>
+            <span class="timeline-line"></span>
+          </div>
+          <div class="career-card">
+            <div class="career-head">
+              <h3 class="career-company">회사명A</h3>
+              <span class="career-period">2025.01 ~ 2026.01</span>
+            </div>
+            <ul class="career-duties">
+              <li>모바일 게임 1종 출시 및 서비스 기획</li>
+              <li>KPI 분석 및 주간 보고</li>
+              <li>월 단위 로그 분석 및 시장동향·패턴 감지</li>
+              <li>이벤트 프로모션 기획</li>
+            </ul>
+          </div>
+        </li>
+        <li class="timeline-item reveal">
+          <div class="timeline-rail" aria-hidden="true">
+            <span class="timeline-dot"></span>
+            <span class="timeline-line"></span>
+          </div>
+          <div class="career-card">
+            <div class="career-head">
+              <h3 class="career-company">회사명B</h3>
+              <span class="career-period">2025.01 ~ 2026.01</span>
+            </div>
+            <ul class="career-duties">
+              <li>모바일 게임 1종 출시 및 서비스 기획</li>
+              <li>KPI 분석 및 주간 보고</li>
+              <li>월 단위 로그 분석 및 시장동향·패턴 감지</li>
+              <li>이벤트 프로모션 기획</li>
+            </ul>
+          </div>
+        </li>
+        <li class="timeline-item reveal timeline-item-last">
+          <div class="timeline-rail" aria-hidden="true">
+            <span class="timeline-dot"></span>
+          </div>
+          <div class="career-card">
+            <div class="career-head">
+              <h3 class="career-company">회사명C</h3>
+              <span class="career-period">2025.01 ~ 2026.01</span>
+            </div>
+            <ul class="career-duties">
+              <li>모바일 게임 1종 출시 및 서비스 기획</li>
+              <li>KPI 분석 및 주간 보고</li>
+              <li>월 단위 로그 분석 및 시장동향·패턴 감지</li>
+              <li>이벤트 프로모션 기획</li>
+            </ul>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===================== 03 포트폴리오 ===================== -->
+  <section class="section" id="portfolio">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow eyebrow-inline">03 — PORTFOLIO</p>
+        <h2 class="section-title">포트폴리오</h2>
+      </div>
+
+      <!-- 하드코딩 텍스트. 관리자가 등록한 파일 1개를 다운로드. 미등록 시 미노출 -->
+      <a href="#" class="download-all reveal" data-field="download-all" download>
+        문서 한번에 받기
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+
+      <div class="portfolio-grid" id="portfolio-grid" data-repeat="portfolio-item">
+
+        <article class="portfolio-card has-download reveal"
+          data-type="image" data-slides="5"
+          data-title="[기능제안] Google features 채택을 위한 게임 제안서">
+          <span class="accent-bar" aria-hidden="true"></span>
+          <button class="card-open" type="button" aria-haspopup="dialog">
+            <div class="card-head">
+              <h3 class="card-title">[기능제안] Google features 채택을 위한 게임 제안서</h3>
+              <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p class="card-desc">구글 인기순위에 노출이 잘되는 가이드라인을 이해하기 쉽게 정리한 문서</p>
+          </button>
+          <a href="#" class="card-download" download>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            문서 다운로드
+          </a>
+        </article>
+
+        <article class="portfolio-card has-download reveal"
+          data-type="pdf" data-slides="8"
+          data-title="[기능제안] IGAWorks, Naver cafe SDK 연동가이드 및 기획">
+          <span class="accent-bar" aria-hidden="true"></span>
+          <button class="card-open" type="button" aria-haspopup="dialog">
+            <div class="card-head">
+              <h3 class="card-title">[기능제안] IGAWorks, Naver cafe SDK 연동가이드 및 기획</h3>
+              <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p class="card-desc">내용을 입력합니다</p>
+          </button>
+          <a href="#" class="card-download" download>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            문서 다운로드
+          </a>
+        </article>
+
+        <!-- 파일 미첨부 예시: 다운로드 버튼 미노출 (card-download 없음) -->
+        <article class="portfolio-card reveal"
+          data-type="image" data-slides="3"
+          data-title="[기능제안] Mobile SDK Renewal">
+          <span class="accent-bar" aria-hidden="true"></span>
+          <button class="card-open" type="button" aria-haspopup="dialog">
+            <div class="card-head">
+              <h3 class="card-title">[기능제안] Mobile SDK Renewal</h3>
+              <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p class="card-desc">내용을 입력합니다</p>
+          </button>
+        </article>
+
+        <article class="portfolio-card has-download reveal"
+          data-type="pdf" data-slides="6"
+          data-title="웹 구축 화면설계서 제작">
+          <span class="accent-bar" aria-hidden="true"></span>
+          <button class="card-open" type="button" aria-haspopup="dialog">
+            <div class="card-head">
+              <h3 class="card-title">웹 구축 화면설계서 제작</h3>
+              <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p class="card-desc">내용을 입력합니다</p>
+          </button>
+          <a href="#" class="card-download" download>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            문서 다운로드
+          </a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 04 푸터 ===================== -->
+  <footer class="footer">
+    <div class="wrap footer-top">
+      <div class="footer-id">
+        <span class="footer-name" data-field="name">김이주</span>
+        <span class="footer-divider" aria-hidden="true"></span>
+        <a class="footer-email" href="mailto:halugo85@gmail.com" data-field="email">halugo85@gmail.com</a>
+      </div>
+      <!-- SNS: 아이콘 이미지 + URL 모두 관리자 입력, 미입력 시 해당 아이콘 미노출 -->
+      <div class="sns-row" id="sns-row" data-repeat="sns-item">
+        <a class="sns-btn" href="#" aria-label="Instagram" data-field="sns-instagram">IG</a>
+        <a class="sns-btn" href="#" aria-label="Blog" data-field="sns-blog">BL</a>
+        <a class="sns-btn" href="#" aria-label="GitHub" data-field="sns-github">GH</a>
+      </div>
+    </div>
+    <div class="wrap footer-bottom">
+      <p class="copyright"><span id="copyright-year"></span> <span data-field="name">김이주</span>. All rights reserved.</p>
+      <p class="footer-tagline">Web · Service Planner</p>
+    </div>
+  </footer>
+
+  <!-- ===================== 레이어팝업 (이미지 / PDF 미리보기 공용) ===================== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="lightbox-panel">
+      <div class="lightbox-head">
+        <h3 class="lightbox-title" id="lightbox-title"></h3>
+        <button class="lightbox-close" type="button" aria-label="닫기">✕</button>
+      </div>
+      <div class="lightbox-viewer">
+        <button class="lightbox-nav lightbox-prev" type="button" aria-label="이전 이미지">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="lightbox-slide" id="lightbox-slide"></div>
+        <button class="lightbox-nav lightbox-next" type="button" aria-label="다음 이미지">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <p class="lightbox-indicator" id="lightbox-indicator"></p>
+    </div>
+  </div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
