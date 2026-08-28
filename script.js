@@ -234,6 +234,7 @@ async function renderImageSlide() {
   slideEl.appendChild(img);
   indicatorEl.textContent = `${currentIndex + 1} / ${totalSlides}`;
   updateNavVisibility();
+  resetZoom();
 }
 
 async function renderPdfSlide() {
@@ -251,6 +252,7 @@ async function renderPdfSlide() {
   slideEl.appendChild(canvas);
   indicatorEl.textContent = `PDF ${currentIndex + 1} / ${totalSlides} 페이지`;
   updateNavVisibility();
+  resetZoom();
 }
 
 function openLightboxShell(title) {
@@ -315,27 +317,82 @@ document.querySelectorAll('.card-download').forEach((btn) => {
   btn.addEventListener('click', (e) => e.stopPropagation());
 });
 
-// 스와이프로도 이미지/PDF 페이지 전환 (모바일 터치 대응)
+// =========================================================
+// 6) 터치 제스처: 핀치줌 + 이동(팬) + 스와이프 넘기기
+//    브라우저 네이티브 확대에 맡기지 않고 전부 직접 처리한다.
+//    (팝업이 화면 고정형이라, 네이티브 핀치줌과 함께 쓰면 터치 좌표가 꼬여
+//     스와이프가 먹통이 되는 문제가 있었음 — 그래서 자체 구현으로 전환)
+// =========================================================
 const viewerEl = lightbox.querySelector('.lightbox-viewer');
+let zoomScale = 1;
+let panX = 0;
+let panY = 0;
+let gestureStartDist = 0;
+let gestureStartScale = 1;
+let panStartX = 0;
+let panStartY = 0;
 let touchStartX = 0;
 let touchStartY = 0;
-viewerEl.addEventListener('touchstart', (e) => {
-  touchStartX = e.changedTouches[0].clientX;
-  touchStartY = e.changedTouches[0].clientY;
-}, { passive: true });
-viewerEl.addEventListener('touchend', (e) => {
-  // 사용자가 핀치줌으로 이미지를 확대한 상태라면, 스와이프는 이미지 안에서 이동(패닝)하려는
-  // 의도일 가능성이 높으므로 페이지 넘기기로 가로채지 않고 브라우저의 기본 동작에 맡긴다.
-  const isZoomedIn = window.visualViewport && window.visualViewport.scale > 1.05;
-  if (isZoomedIn) return;
+let isPanning = false;
 
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  const SWIPE_THRESHOLD = 48;
-  // 세로 스크롤 제스처와 헷갈리지 않도록, 가로 이동이 세로 이동보다 뚜렷할 때만 반응
-  if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy)) return;
-  if (dx < 0 && !nextBtn.hidden) nextBtn.click();      // 왼쪽으로 스와이프 → 다음
-  if (dx > 0 && !prevBtn.hidden) prevBtn.click();      // 오른쪽으로 스와이프 → 이전
+function getSlideContent() {
+  return slideEl.firstElementChild; // <img> 또는 <canvas>
+}
+function applyZoomTransform() {
+  const el = getSlideContent();
+  if (el) el.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
+}
+function resetZoom() {
+  zoomScale = 1;
+  panX = 0;
+  panY = 0;
+  applyZoomTransform();
+}
+function touchDistance(t0, t1) {
+  return Math.hypot(t0.clientX - t1.clientX, t0.clientY - t1.clientY);
+}
+
+viewerEl.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 2) {
+    gestureStartDist = touchDistance(e.touches[0], e.touches[1]);
+    gestureStartScale = zoomScale;
+  } else if (e.touches.length === 1) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    panStartX = panX;
+    panStartY = panY;
+    isPanning = zoomScale > 1.02; // 이미 확대된 상태라면 한 손가락 이동 = 이미지 패닝
+  }
+}, { passive: true });
+
+viewerEl.addEventListener('touchmove', (e) => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const newDist = touchDistance(e.touches[0], e.touches[1]);
+    zoomScale = Math.min(4, Math.max(1, gestureStartScale * (newDist / gestureStartDist)));
+    applyZoomTransform();
+  } else if (e.touches.length === 1 && isPanning) {
+    e.preventDefault();
+    panX = panStartX + (e.touches[0].clientX - touchStartX);
+    panY = panStartY + (e.touches[0].clientY - touchStartY);
+    applyZoomTransform();
+  }
+}, { passive: false });
+
+viewerEl.addEventListener('touchend', (e) => {
+  // 확대되지 않은 상태에서 한 손가락으로 움직였다면 → 스와이프로 이전/다음 넘기기
+  if (zoomScale <= 1.02 && !isPanning) {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    const SWIPE_THRESHOLD = 48;
+    if (Math.abs(dx) >= SWIPE_THRESHOLD && Math.abs(dx) >= Math.abs(dy)) {
+      if (dx < 0 && !nextBtn.hidden) nextBtn.click();      // 왼쪽으로 스와이프 → 다음
+      if (dx > 0 && !prevBtn.hidden) prevBtn.click();      // 오른쪽으로 스와이프 → 이전
+    }
+  }
+  // 살짝만 확대된(거의 원래 크기) 상태로 손을 떼면 자연스럽게 원위치로 스냅
+  if (zoomScale <= 1.02) resetZoom();
+  isPanning = false;
 }, { passive: true });
 
 // =========================================================

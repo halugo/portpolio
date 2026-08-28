@@ -394,7 +394,7 @@ img,svg{ display: block; }
   border-radius: var(--radius-md);
   padding: 0;
   height: 82vh;
-  touch-action: pan-y pinch-zoom; /* 세로 스크롤 + 핀치줌은 네이티브로 허용, 가로 스와이프만 JS가 처리 */
+  touch-action: none; /* 핀치줌/팬/스와이프를 전부 JS가 직접 처리 (브라우저 네이티브 확대와의 충돌 방지) */
 }
 .lightbox-nav{
   flex-shrink: 0;
@@ -420,6 +420,11 @@ img,svg{ display: block; }
   text-align: center;
   padding: 0;
   overflow: hidden;
+}
+.lightbox-slide img,
+.lightbox-slide canvas{
+  transform-origin: center center;
+  will-change: transform;
 }
 .lightbox-indicator{
   margin-top: 16px;
