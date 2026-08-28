@@ -75,7 +75,11 @@ function renderSiteContent(sc) {
 
   const downloadAllEl = document.querySelector('[data-field="download-all"]');
   if (downloadAllEl) {
-    if (sc.all_docs_file_url) { downloadAllEl.href = sc.all_docs_file_url; downloadAllEl.style.display = ''; }
+    if (sc.all_docs_file_url) {
+      downloadAllEl.href = sc.all_docs_file_url;
+      downloadAllEl.setAttribute('download', sc.all_docs_file_name || '');
+      downloadAllEl.style.display = '';
+    }
     else { downloadAllEl.style.display = 'none'; }
   }
 }
@@ -114,7 +118,7 @@ function renderPortfolio(items) {
     article.className = 'portfolio-card reveal' + (item.download_file_url ? ' has-download' : '');
 
     const downloadHtml = item.download_file_url ? `
-      <a href="${item.download_file_url}" class="card-download" download>
+      <a href="${item.download_file_url}" class="card-download" download="${escapeHtml(item.download_file_name || '')}">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         문서 다운로드
       </a>` : '';
@@ -302,6 +306,24 @@ document.addEventListener('keydown', (e) => {
 document.querySelectorAll('.card-download').forEach((btn) => {
   btn.addEventListener('click', (e) => e.stopPropagation());
 });
+
+// 스와이프로도 이미지/PDF 페이지 전환 (모바일 터치 대응)
+const viewerEl = lightbox.querySelector('.lightbox-viewer');
+let touchStartX = 0;
+let touchStartY = 0;
+viewerEl.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].clientX;
+  touchStartY = e.changedTouches[0].clientY;
+}, { passive: true });
+viewerEl.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  const SWIPE_THRESHOLD = 48;
+  // 세로 스크롤 제스처와 헷갈리지 않도록, 가로 이동이 세로 이동보다 뚜렷할 때만 반응
+  if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy)) return;
+  if (dx < 0 && !nextBtn.hidden) nextBtn.click();      // 왼쪽으로 스와이프 → 다음
+  if (dx > 0 && !prevBtn.hidden) prevBtn.click();      // 오른쪽으로 스와이프 → 이전
+}, { passive: true });
 
 // =========================================================
 // 초기 실행
