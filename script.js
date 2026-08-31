@@ -35,18 +35,26 @@ async function loadData() {
       supabase.from('sns_links').select('*').order('sort_order', { ascending: true }),
     ]);
 
+    const anyError = [siteRes, careerRes, portfolioRes, imagesRes, snsRes].some((r) => r.error);
+    if (anyError) {
+      console.error('Supabase 조회 중 오류가 발생해 기본 화면을 표시합니다.');
+      return { ok: false, ...FALLBACK };
+    }
+
     const site_content = siteRes.data || FALLBACK.site_content;
-    const career_items = careerRes.data && careerRes.data.length ? careerRes.data : FALLBACK.career_items;
+    // 빈 배열([])은 "관리자가 의도적으로 전부 삭제한 상태"이므로 그대로 존중한다.
+    // (연결 자체가 안 됐을 때만 아래 catch에서 기본 화면으로 대체함)
+    const career_items = careerRes.data || [];
     const portfolio_items = (portfolioRes.data || []).map((item) => ({
       ...item,
       images: (imagesRes.data || []).filter((img) => img.portfolio_id === item.id),
     }));
     const sns_links = (snsRes.data || []).filter((s) => s.icon_url && s.link_url);
 
-    return { site_content, career_items, portfolio_items, sns_links };
+    return { ok: true, site_content, career_items, portfolio_items, sns_links };
   } catch (err) {
-    console.error('Supabase 데이터 로드 실패, 기본값으로 표시합니다.', err);
-    return FALLBACK;
+    console.error('Supabase 연결에 실패해 기본 화면을 표시합니다.', err);
+    return { ok: false, ...FALLBACK };
   }
 }
 
@@ -85,8 +93,8 @@ function renderSiteContent(sc) {
 
 function renderCareer(items) {
   const timeline = document.getElementById('timeline');
-  if (!timeline || items.length === 0) return; // 데이터 없으면 기존 정적 예시를 그대로 둠
-  timeline.innerHTML = '';
+  if (!timeline) return;
+  timeline.innerHTML = ''; // 항목이 0개여도(관리자가 전부 삭제) 정적 예시가 남지 않도록 항상 비움
   items.forEach((item, index) => {
     const isLast = index === items.length - 1;
     const li = document.createElement('li');
@@ -110,8 +118,8 @@ function renderCareer(items) {
 
 function renderPortfolio(items) {
   const grid = document.getElementById('portfolio-grid');
-  if (!grid || items.length === 0) return; // 데이터 없으면 기존 정적 예시를 그대로 둠
-  grid.innerHTML = '';
+  if (!grid) return;
+  grid.innerHTML = ''; // 항목이 0개여도(관리자가 전부 삭제) 정적 예시가 남지 않도록 항상 비움
   items.forEach((item) => {
     const article = document.createElement('article');
     article.className = 'portfolio-card reveal' + (item.download_file_url ? ' has-download' : '');
@@ -148,8 +156,8 @@ function renderPortfolio(items) {
 
 function renderSns(links) {
   const row = document.getElementById('sns-row');
-  if (!row || links.length === 0) return; // 데이터 없으면 기존 정적 예시를 그대로 둠
-  row.innerHTML = '';
+  if (!row) return;
+  row.innerHTML = ''; // 항목이 0개여도(관리자가 전부 삭제) 정적 예시가 남지 않도록 항상 비움
   links.forEach((link) => {
     const a = document.createElement('a');
     a.className = 'sns-btn';
@@ -401,8 +409,12 @@ viewerEl.addEventListener('touchend', (e) => {
 (async function main() {
   const data = await loadData();
   renderSiteContent(data.site_content);
-  renderCareer(data.career_items);
-  renderPortfolio(data.portfolio_items);
-  renderSns(data.sns_links);
+  if (data.ok) {
+    // 정상적으로 연결된 경우: 항목이 0개여도 실제 상태(빈 화면)를 그대로 반영
+    renderCareer(data.career_items);
+    renderPortfolio(data.portfolio_items);
+    renderSns(data.sns_links);
+  }
+  // data.ok가 false(연결 실패)면 경력/포트폴리오/SNS는 index.html의 정적 예시를 그대로 둔다
   initScrollReveal();
 })();
