@@ -71,6 +71,11 @@ export default async function handler(req, res) {
           company_name: item.company_name,
           period_text: item.period_text,
           duties: Array.isArray(item.duties) ? item.duties : [],
+          has_projects: !!item.has_projects,
+          // 빈 입력칸은 버리고 저장 ('없음'이어도 입력값은 보존 — 공개 화면은 has_projects로만 노출 판단)
+          projects: Array.isArray(item.projects)
+            ? item.projects.map((p) => String(p || '').trim()).filter(Boolean)
+            : [],
           sort_order: index,
         }));
         const { error: insertError } = await supabase.from('career_items').insert(careerRows);

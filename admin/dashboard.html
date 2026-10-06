@@ -57,6 +57,25 @@
   }
   .add-btn:hover{ background:var(--primary-light); }
 
+  .radio-row{ display:flex; gap:20px; }
+  .radio-row .radio-opt{
+    display:inline-flex; align-items:center; gap:6px; margin:0;
+    font-size:14px; font-weight:500; color:var(--text-primary); cursor:pointer;
+  }
+  .project-list{ margin-top:10px; padding:14px; border-radius:10px; background:var(--bg-page); }
+  .project-row{ display:flex; gap:8px; align-items:flex-start; margin-bottom:10px; }
+  .project-row textarea{ flex:1; background:#fff; }
+  .project-remove-btn{
+    flex:none; width:28px; height:28px; margin-top:6px; border-radius:50%;
+    border:1px solid var(--border); background:#fff; color:var(--danger); font-size:13px; font-weight:700;
+  }
+  .project-remove-btn:hover{ background:var(--danger-bg); }
+  .project-add-btn{
+    padding:8px 14px; border:1px dashed var(--primary); border-radius:8px;
+    background:#fff; color:var(--primary); font-size:13px; font-weight:600;
+  }
+  .project-add-btn:hover{ background:var(--primary-light); }
+
   select{ padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; }
 
   .file-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }

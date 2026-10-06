@@ -97,6 +97,13 @@ function renderCareerList() {
   state.career_items.forEach((item, index) => {
     const card = document.createElement('div');
     card.className = 'item-card';
+    const hasProjects = !!item.has_projects;
+    const projects = item.projects || [];
+    const projectRows = projects.map((text, pIdx) => `
+      <div class="project-row">
+        <textarea rows="3" data-project-text="${index}:${pIdx}" placeholder="프로젝트명, 기간, 역할, 성과 등">${escapeHtml(text || '')}</textarea>
+        ${projects.length > 1 ? `<button type="button" class="project-remove-btn" data-remove-project="${index}:${pIdx}" aria-label="프로젝트 삭제">✕</button>` : ''}
+      </div>`).join('');
     card.innerHTML = `
       <button type="button" class="remove-btn" data-remove-career="${index}">✕</button>
       <label>회사명</label>
@@ -105,6 +112,16 @@ function renderCareerList() {
       <input type="text" data-career-field="period_text" data-index="${index}" value="${escapeAttr(item.period_text || '')}" placeholder="예: 2025.01 ~ 2026.01">
       <label>담당 업무 (한 줄에 하나씩)</label>
       <textarea rows="4" data-career-field="duties" data-index="${index}">${escapeHtml((item.duties || []).join('\n'))}</textarea>
+      <label>주요 프로젝트</label>
+      <div class="radio-row">
+        <label class="radio-opt"><input type="radio" name="career-has-projects-${index}" value="1" data-has-projects="${index}" ${hasProjects ? 'checked' : ''}> 있음</label>
+        <label class="radio-opt"><input type="radio" name="career-has-projects-${index}" value="0" data-has-projects="${index}" ${hasProjects ? '' : 'checked'}> 없음</label>
+      </div>
+      ${hasProjects ? `
+      <div class="project-list">
+        ${projectRows}
+        <button type="button" class="project-add-btn" data-add-project="${index}">+ 프로젝트 추가</button>
+      </div>` : ''}
     `;
     list.appendChild(card);
   });
@@ -113,6 +130,35 @@ function renderCareerList() {
     btn.addEventListener('click', () => {
       state.career_items.splice(Number(btn.dataset.removeCareer), 1);
       renderCareerList();
+    });
+  });
+  list.querySelectorAll('[data-has-projects]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      const item = state.career_items[Number(radio.dataset.hasProjects)];
+      item.has_projects = radio.value === '1';
+      // 처음 '있음'으로 바꿀 때 입력칸 1개를 기본으로 띄운다. ('없음'으로 바꿔도 입력값은 지우지 않음 — 다시 '있음' 선택 시 복원)
+      if (item.has_projects && !(item.projects || []).length) item.projects = [''];
+      renderCareerList();
+    });
+  });
+  list.querySelectorAll('[data-add-project]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const item = state.career_items[Number(btn.dataset.addProject)];
+      item.projects = [...(item.projects || []), ''];
+      renderCareerList();
+    });
+  });
+  list.querySelectorAll('[data-remove-project]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const [idx, pIdx] = btn.dataset.removeProject.split(':').map(Number);
+      state.career_items[idx].projects.splice(pIdx, 1);
+      renderCareerList();
+    });
+  });
+  list.querySelectorAll('[data-project-text]').forEach((textarea) => {
+    textarea.addEventListener('input', () => {
+      const [idx, pIdx] = textarea.dataset.projectText.split(':').map(Number);
+      state.career_items[idx].projects[pIdx] = textarea.value;
     });
   });
   list.querySelectorAll('[data-career-field]').forEach((input) => {
@@ -127,7 +173,7 @@ function renderCareerList() {
 }
 
 $('#career-add-btn').addEventListener('click', () => {
-  state.career_items.push({ company_name: '', period_text: '', duties: [] });
+  state.career_items.push({ company_name: '', period_text: '', duties: [], has_projects: false, projects: [] });
   renderCareerList();
 });
 

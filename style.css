@@ -228,6 +228,41 @@ img,svg{ display: block; }
   background: var(--bullet);
 }
 
+/* 주요 프로젝트 아코디언 (카드별 독립 개폐) */
+.career-projects{ margin-top: 20px; border-top: 1px solid var(--border-light); padding-top: 16px; }
+.career-projects summary{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.career-projects summary::-webkit-details-marker{ display: none; }
+.career-projects-count{
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--primary-light);
+  font-size: 12px;
+  text-align: center;
+}
+.career-projects-chevron{ transition: transform .2s; }
+.career-projects[open] .career-projects-chevron{ transform: rotate(180deg); }
+.career-projects-list{ margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.career-projects-list li{
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-page);
+  font-size: 14.5px;
+  color: var(--text-body);
+  line-height: 1.6;
+  white-space: pre-line; /* 관리자 입력 시 줄바꿈 그대로 표시 */
+}
+
 /* =========================================================
    03 포트폴리오
 ========================================================= */
@@ -489,6 +524,8 @@ img,svg{ display: block; }
   .career-company{ font-size: 18px; }
   .career-period{ font-size: 11.5px; }
   .career-duties li{ font-size: 13.5px; }
+  .career-projects summary{ font-size: 13.5px; }
+  .career-projects-list li{ font-size: 13.5px; padding: 12px 14px; }
 
   .download-all{ font-size: 14px; margin-top: 20px; }
   .portfolio-grid{ grid-template-columns: 1fr; margin-top: 32px; gap: 16px; }

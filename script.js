@@ -100,6 +100,16 @@ function renderCareer(items) {
     const li = document.createElement('li');
     li.className = 'timeline-item reveal' + (isLast ? ' timeline-item-last' : '');
     const duties = (item.duties || []).map((d) => `<li>${escapeHtml(d)}</li>`).join('');
+    const projects = item.has_projects ? (item.projects || []).filter((p) => p && p.trim()) : [];
+    // <details>는 카드마다 독립적으로 열고 닫히므로 여러 개를 동시에 펼쳐둘 수 있다
+    const projectsHtml = projects.length ? `
+        <details class="career-projects">
+          <summary>
+            주요 프로젝트 보기 <span class="career-projects-count">${projects.length}</span>
+            <svg class="career-projects-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <ul class="career-projects-list">${projects.map((p) => `<li>${escapeHtml(p.trim())}</li>`).join('')}</ul>
+        </details>` : '';
     li.innerHTML = `
       <div class="timeline-rail" aria-hidden="true">
         <span class="timeline-dot"></span>
@@ -110,7 +120,7 @@ function renderCareer(items) {
           <h3 class="career-company">${escapeHtml(item.company_name)}</h3>
           <span class="career-period">${escapeHtml(item.period_text)}</span>
         </div>
-        <ul class="career-duties">${duties}</ul>
+        <ul class="career-duties">${duties}</ul>${projectsHtml}
       </div>`;
     timeline.appendChild(li);
   });
