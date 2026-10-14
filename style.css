@@ -45,13 +45,13 @@ img,svg{ display: block; }
   padding: 0 32px;
 }
 
+/* 섹션 라벨(01 — INTRO, 02 — CAREER …): 모든 섹션 동일 규칙 */
 .eyebrow{
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 4.2px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 3px;
   color: var(--primary);
 }
-.eyebrow-inline{ letter-spacing: 3px; font-size: 15px; font-weight: 500; }
 
 /* =========================================================
    01 내 소개 (Hero)
@@ -70,12 +70,12 @@ img,svg{ display: block; }
 
 .hero .wrap{ position: relative; z-index: 1; }
 
+/* 이름 타이틀은 섹션 타이틀(.section-title)과 동일 규칙 */
 .hero-name{
-  font-size: 104px;
+  font-size: 44px;
   font-weight: 700;
-  letter-spacing: -2.6px;
-  line-height: 1.05;
-  padding-top: 20px;
+  letter-spacing: -1.1px;
+  margin-top: 8px;
 }
 .tagline{
   font-size: 18px;
@@ -257,9 +257,9 @@ img,svg{ display: block; }
   padding: 14px 16px;
   border-radius: var(--radius-lg);
   background: var(--bg-page);
-  font-size: 14.5px;
+  font-size: 15px;
   color: var(--text-body);
-  line-height: 1.6;
+  line-height: 1.5;
   white-space: pre-line; /* 관리자 입력 시 줄바꿈 그대로 표시 */
 }
 
@@ -495,9 +495,9 @@ img,svg{ display: block; }
   .wrap{ padding: 0 24px; }
 
   .hero{ padding: 56px 0 40px; }
-  .hero-name{ font-size: 52px; letter-spacing: -1.3px; padding-top: 16px; }
+  .hero-name{ font-size: 30px; }
   .tagline{ font-size: 14px; padding-top: 12px; }
-  .eyebrow{ font-size: 12px; letter-spacing: 3.6px; }
+  .eyebrow{ font-size: 13px; letter-spacing: 2.6px; }
 
   .profile-card{
     margin-top: 32px;
@@ -513,7 +513,6 @@ img,svg{ display: block; }
   #portfolio{ padding-top: 32px; }
   .section-title{ font-size: 30px; }
   .section-sub{ font-size: 14px; margin-top: 12px; }
-  .eyebrow-inline{ font-size: 13px; }
 
   .timeline{ margin-top: 40px; }
   .timeline-item{ gap: 16px; margin-bottom: 32px; }
